@@ -23,7 +23,7 @@ class Board
 		@rows.each_with_index do |row, row_idx|
 			row.each_with_index do |square, col_idx|
 				next unless (row_idx + col_idx) % 2 == 0
-				next if color == :BLACK && row_idx > 3
+				next if color == :BLACK && row_idx > 2
 				next if color == :RED && row_idx < 5
 				row[col_idx] = Piece.new(self, color, [row_idx, col_idx])
 			end
