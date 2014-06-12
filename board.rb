@@ -39,6 +39,24 @@ class Board
 		end.join("\n")
 	end
 	
+	def force_jump
+		
+	
+	end
+	
+	def pieces
+		@rows.flatten.compact
+	end
+	
+	def dup
+		dup_board = Board.new(false)
+		pieces.each do |piece|
+			piece.class.new(piece.board, piece.color, piece.pos)
+			
+			end
+		end
+	end
+	
 	def move(grab, destination)
 		selected_piece = @rows[grab[0]][grab[1]]
 		@rows[destination[0]][destination[1]] = selected_piece
