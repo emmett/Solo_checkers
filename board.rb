@@ -39,5 +39,12 @@ class Board
 		end.join("\n")
 	end
 	
-	
+	def move(grab, destination)
+		selected_piece = @rows[grab[0]][grab[1]]
+		@rows[destination[0]][destination[1]] = selected_piece
+		selected_piece.pos = destination
+		@rows[grab[0]][grab[1]] = nil
+		system("clear")
+		puts self.draw
+	end
 end

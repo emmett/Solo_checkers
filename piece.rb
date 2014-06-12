@@ -1,3 +1,5 @@
+require 'debugger'
+
 class Piece
 	BLACK = [
 		[1, 1],
@@ -11,7 +13,7 @@ class Piece
 	
 	BOUNDS = (1..8).to_a.product((1..8).to_a)
 	
-	attr_accessor :color
+	attr_accessor :color, :pos
 	
 	def initialize(board, color, pos)
 		raise "color error" unless [:RED, :BLACK].include? (color)
@@ -23,7 +25,7 @@ class Piece
 	end
 	
 	def to_s
-		 @color == :RED ? "o" : "*"
+		@color == :RED ? "o" : "*"
 	end
 	
 	def moves
@@ -56,16 +58,15 @@ class Piece
 		@board.rows[pos[0]][pos[1]].nil?
 	end
 	
-#  def is_jumpable?(pos)
-# 		possible_jump = []
-# 		possible_dest = []
-# 		@dir.each do |dir|
-# 			board.[[@pos[0] + dir[0]][@pos[1] + dir[1]].color != @color
-# 			possible_dest << [(@pos[0] + (2 * dir[0])),(@pos[1] + (2 * dir[1]))]
-# 			possible_jump << possible_dest.select{ |move| in_bounds(move) }
-# 		end
-# 		possible_jump
-# 	end
+	# def is_jumpable?(pos)
+	# 	possible_jump = []
+	# 	@dir.each do |dir|
+	# 		board.rows[[@pos[0] + dir[0]][@pos[1] + dir[1]].color != @color
+	# 		possible_dest = [(@pos[0] + (2 * dir[0])),(@pos[1] + (2 * dir[1]))]
+	# 		possible_jump << possible_dest.select{ |move| in_bounds(move) }
+	# 	end
+	# 	possible_jump
+	# end
 	
 	def king_me
 		if color = :RED && pos[0] = 8
