@@ -11,6 +11,8 @@ class Piece
 	
 	BOUNDS = (1..8).to_a.product((1..8).to_a)
 	
+	attr_accessor :color
+	
 	def initialize(board, color, pos)
 		raise "color error" unless [:RED, :BLACK].include? (color)
 		@color = color
