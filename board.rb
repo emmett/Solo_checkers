@@ -1,4 +1,5 @@
-require_relative 'piece'
+load 'piece.rb'
+require 'debugger'
 
 class Board
 	attr_accessor :pos, :board
@@ -29,6 +30,11 @@ class Board
 			end
 		end
 	end
+	
+  def add_piece(piece, pos)
+    check_pos = @rows[pos[0]][pos[1]]
+		 check_pos = piece unless check_pos
+   end
 
 	
 	def draw
@@ -38,31 +44,33 @@ class Board
 			end.join(" ")
 		end.join("\n")
 	end
-	
-	def force_jump
-		
-	
-	end
-	
-	def pieces
+
+	def pieces_list
 		@rows.flatten.compact
-	end
+	end 
 	
 	def dup
 		dup_board = Board.new(false)
-		pieces.each do |piece|
-			piece.class.new(piece.board, piece.color, piece.pos)
-			
-			end
+		pieces_list.each do |piece|
+			loc = piece.pos
+			color = piece.color
+			dup_board.rows[loc[0]][loc[1]] = Piece.new(dup_board, color, loc)
 		end
+		dup_board
 	end
 	
 	def move(grab, destination)
+		selected_piece = @rows[grab[0]][grab[1]]
+		selected_piece.force_jump
+		move!(grab, destination)
+	end
+	
+	def move!(grab, destination)
 		selected_piece = @rows[grab[0]][grab[1]]
 		@rows[destination[0]][destination[1]] = selected_piece
 		selected_piece.pos = destination
 		@rows[grab[0]][grab[1]] = nil
 		system("clear")
-		puts self.draw
+		puts draw
 	end
 end
