@@ -6,54 +6,72 @@ class Piece
 	
 	DOWN =[
 		[-1, 1],
-		[-1, 1]
+		[-1, -1]
 	]
 	
+	BOUNDS = (1..8).to_a.product((1..8).to_a)
+	
 	def initialize(board, color, pos)
-		raise "color error" unless [:red, :black].include? (color)
+		raise "color error" unless [:RED, :BLACK].include? (color)
 		@color = color
 		@pos = pos
 		@king = false
-		@color == :red ? @dir = DOWN : @dir = UP
+		@color == :RED ? @dir = DOWN : @dir = UP
 		@board = board
 	end
 	
+	def to_s
+		 @color == :RED ? "o" : "*"
+	end
+	
 	def moves
-		slide + jumpable
+		slide + jump
 	end
 	
 	def slide
 		possible = []
 		@dir.each do |dir|
-			possible << [pos[0] + dir[0], pos[1] + dir[1]]
+			possible << [@pos[0] + dir[0], @pos[1] + dir[1]]
 		end
-		
-		possible.select{ |move| if is_open?(move)}
+		possible.select{ |move| in_bounds(move) }
+		possible.select{ |move| is_open?(move) }
 	end
 	
 	def jump
-		possible = []
+		possible_jump = []
 		@dir.each do |dir|
-			possible << [pos[0] + dir[0], pos[1] + dir[1]]
+			possible_jump << [(@pos[0] + (2 * dir[0])),(@pos[1] + (2 * dir[1]))]
 		end
-		
-		possible.select{ |move| if is_jumpable?(move)}
+		possible_jump.select{ |move| in_bounds(move) }
+		# possible.select{ |move| is_jumpable?(move)}
+	end
+	
+	def in_bounds(pos)
+		BOUNDS.include?(pos)
 	end
 	
 	def is_open?(pos)
 		board[pos[0], pos[1]].empty?
 	end
 	
-	def is_jumpable?(pos)
-		board[pos[0], pos[1]].color != @color && pos[0]
-	end
+	# def is_jumpable?(pos)
+# 		possible_jump = []
+# 		possible_dest = []
+# 		@dir.each do |dir|
+# 			board.[[@pos[0] + dir[0]][@pos[1] + dir[1]].color != @color
+# 			possible_dest << [(@pos[0] + (2 * dir[0])),(@pos[1] + (2 * dir[1]))]
+# 			possible_jump << possible_dest.select{ |move| in_bounds(move) }
+# 		end
+# 		possible_jump
+# 	end
 	
 	def king_me
-		if color = :red && pos[0] = 8
+		if color = :RED && pos[0] = 8
 			@king == true
 			@dir == DOWN + UP
 		end
-		if color = :black && pos[0] = 1
+		
+		if color = :BLACK && pos[0] = 1
 			@king == true
 			@dir == DOWN + UP
 		end

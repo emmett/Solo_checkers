@@ -1,12 +1,39 @@
+require_relative 'piece'
+
 class Board
-	def initialize
+	attr_accessor :pos, :board
+	attr_reader :rows
+	
+	def initialize(create_new = true)
+		@rows = Array.new(8) { Array.new(8) }
+		populate_checkers if create_new
 	end
 	
-	def board_setup
-		@board = Array.new(9) {Array.new(9)}
+	def empty?(pos)
+		return nil unless @board[pos[0]][pos[1]]
 	end
+	
+	def populate_checkers
+		[:RED, :BLACK].each do |color|
+			fill(color)
+		end
+	end
+	
+	def fill(color)
+		@rows.each_with_index do |row, row_idx|
+			row.each_with_index do |square, col_idx|
+				next unless (row_idx + col_idx) % 2 == 0
+				row[col_idx] = Piece.new(self, color, [row_idx, col_idx])
+			end
+		end
+	end
+
 	
 	def draw
-		
+		@rows.each do |row|
+			p row
+		end
 	end
+	
+	
 end
