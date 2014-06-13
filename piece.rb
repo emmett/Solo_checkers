@@ -30,25 +30,32 @@ class Piece
 	def moves
 		
 	end
+	
 	def perform_jump(end_dest)
 		midpoint = [(pos[0] + end_dest[0]) / 2, (pos[1] + end_dest[1]) / 2]
+		raise 'invalid_jump' unless valid_jumps.include? (end_dest)
 		@board.move!(pos, midpoint)
 		@board.move!(midpoint, end_dest)
+		self.pos = end_dest
 	end
 	
-	def perform_slide
+	def perform_slide(end_dest)
+		raise 'Not a valid move' unless valid_slide.include? (end_dest)
+		raise 'Forced to jump' if force_jump
+		@board.move!(pos, end_dest)
+		self.pos = end_dest
 	end
 	
-	def slide
-		possible = []
+	def valid_slide
+		possible_slide = []
 		@dir.each do |dir|
-			possible << [@pos[0] + dir[0], @pos[1] + dir[1]]
+			possible_slide << [@pos[0] + dir[0], @pos[1] + dir[1]]
 		end
-		possible.select!{ |move| in_bounds(move) }
-		possible.select!{ |move| is_open?(move) }
+		possible_slide = possible_slide.select{ |move| in_bounds(move) }
+		return possible_slide.select{ |move| is_open?(move) }
 	end
 	
-	def jump
+	def valid_jumps
 		possible_jump = []
 		@dir.each do |dir|
 			adj_piece = board.rows[@pos[0] + dir[0]][@pos[1] + dir[1]]
@@ -64,14 +71,13 @@ class Piece
 		pieces = @board.pieces_list.select {|piece| @color == color}
 		jumps = []
 		pieces.each do |piece|
-			jumps += piece.pos if !jump.empty?
+			jumps += piece.pos unless valid_jumps.empty?
 		end
 		jumps
 	end
 	
 	def force_jump
-
-		raise 'move must be a jump' if jumps.count > 0
+		true if jumps.count > 0
 	end
 	
 	def in_bounds(pos)
@@ -93,5 +99,4 @@ class Piece
 			@dir = DOWN + UP
 		end
 	end
-	
 end

@@ -18,6 +18,11 @@ class Board
 		[:RED, :BLACK].each do |color|
 			fill(color)
 		end
+		puts draw
+	end
+	
+	def to_s
+		p
 	end
 	
 	def fill(color)
@@ -31,13 +36,14 @@ class Board
 		end
 	end
 	
-  def add_piece(piece, pos)
-    check_pos = @rows[pos[0]][pos[1]]
-		 check_pos = piece unless check_pos
-   end
+	def add_piece(piece, pos)
+		check_pos = @rows[pos[0]][pos[1]]
+		check_pos = piece unless check_pos
+	end
 
 	
 	def draw
+		system("clear")
 		@rows.map do |row|
 			row.map do |square|
 				square.nil? ? "." : square.to_s
@@ -60,17 +66,46 @@ class Board
 	end
 	
 	def move(grab, destination)
-		selected_piece = @rows[grab[0]][grab[1]]
-		selected_piece.force_jump
-		move!(grab, destination)
+		begin
+			selected_piece = @rows[grab[0]][grab[1]]
+			selected_piece.perform_jump(destination)
+		rescue
+			selected_piece.perform_slide(destination)	
+		end
 	end
+	
+	def moves_list(moves)
+		if moves.count == 2
+			self.move(moves[0],moves[1])
+		end
+		if moves.count > 2
+			begin	
+				moves.each_with_index do |move, idx|
+					grab = moves[idx]
+					next_dest = moves[idx + 1]
+					self.rows[grab[0]][grab[1]].perform_jump(next_dest)
+				end
+			rescue
+			end
+		end
+	end
+	
+	def valid_move_seq(moves)
+		begin
+			dup_board = self.dup
+			dup_board.perform_moves!(moves)
+			self.perform_moves!(moves)
+		rescue
+			p "InvalidMoveError"
+		end
+	end
+	
 	
 	def move!(grab, destination)
 		selected_piece = @rows[grab[0]][grab[1]]
 		@rows[destination[0]][destination[1]] = selected_piece
-		selected_piece.pos = destination
 		@rows[grab[0]][grab[1]] = nil
-		system("clear")
 		puts draw
 	end
 end
+
