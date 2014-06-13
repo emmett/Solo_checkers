@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 load './piece.rb'
 class Board
 	attr_accessor :pos, :board
@@ -50,7 +51,7 @@ class Board
 		system("clear")
 		@rows.map do |row|
 			row.map do |square|
-				square.nil? ? "." : square.to_s
+				square.nil? ? "☐" : square.to_s
 			end.join(" ")
 		end.join("\n")
 	end

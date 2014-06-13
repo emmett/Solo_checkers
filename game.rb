@@ -22,7 +22,7 @@ class Game
 	
 	def play
 		until lost?
-
+			@board.draw
 			begin
 				move_list = []
 				done = false

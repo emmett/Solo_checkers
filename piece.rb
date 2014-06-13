@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 require 'debugger'
-
 class Piece
 	BLACK = [
 		[1, 1],
@@ -25,9 +25,9 @@ class Piece
 	
 	def to_s
 		if @king
-			@color == :RED ? "K" : "@"
+			@color == :RED ? "☆" : "★"
 		else
-			@color == :RED ? "o" : "*"
+			@color == :RED ? "◉" : "◎"
 		end
 	end
 	
@@ -44,8 +44,9 @@ class Piece
 	end
 	
 	def perform_slide(end_dest)
+		debugger
 		raise 'Not a valid move' unless valid_slide.include? (end_dest)
-		raise 'Forced to jump' if force_jump
+		raise 'Forced to jump' if force_jump == true
 		@board.move!(self.pos, end_dest)
 		self.pos = end_dest
 	end
@@ -73,11 +74,11 @@ class Piece
 	
 	def jumps
 		pieces = @board.pieces_list.select {|piece| @color == self.color}
-		jumps = []
+		total_jumps = []
 		pieces.each do |piece|
-			jumps += piece.pos unless valid_jumps.empty?
+			total_jumps += piece.pos unless valid_jumps.empty?
 		end
-		jumps
+		total_jumps
 	end
 	
 	def force_jump
