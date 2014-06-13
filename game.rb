@@ -1,5 +1,6 @@
 load './board.rb'
 require 'debugger'
+
 class Game
 	attr_reader :board
 	
@@ -8,7 +9,6 @@ class Game
 		@player1 = Player.new(:RED)
 		@player2 = Player.new(:BLACK)
 		@turn = @player1.color
-		# play
 	end
 	
 	def lost?
@@ -24,12 +24,13 @@ class Game
 		until lost?
 
 			begin
+				move_list = []
 				done = false
 				p "Please make your selection"
 				p "#{@turn} Turn"
 				selection = gets.chomp
 				selection = selection.split(",")
-				selection.map! { |coord| coord.to_i }
+				move_list << selection.map! { |coord| coord.to_i }
 				piece = @board.rows[selection[0]][selection[1]]
 				raise 'Not your turn' unless piece.color == @turn
 				until done
@@ -37,14 +38,14 @@ class Game
 					destination = gets.chomp
 					destination = destination.split(",")
 					destination.map! { |coord| coord.to_i }	
-					selection += destination		
+					move_list << destination		
 					p "Is there another destination? (Y/N)"
 					answer = gets.chomp
 					done = true if answer[0].downcase == "n" 
 				end
-				@board.valid_move_seq(selection)
-			
-			@turn == :RED ? @turn = :BLACK : @turn = :RED
+				@board.valid_move_seq(move_list)
+				@turn == :RED ? @turn = :BLACK : @turn = :RED
+				
 			rescue RuntimeError => e
 				p e.message
 			end

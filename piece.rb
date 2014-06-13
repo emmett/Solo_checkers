@@ -72,7 +72,7 @@ class Piece
 	end
 	
 	def jumps
-		pieces = @board.pieces_list.select {|piece| @color == color}
+		pieces = @board.pieces_list.select {|piece| @color == self.color}
 		jumps = []
 		pieces.each do |piece|
 			jumps += piece.pos unless valid_jumps.empty?
