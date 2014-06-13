@@ -1,6 +1,4 @@
-load 'piece.rb'
-require 'debugger'
-
+load './piece.rb'
 class Board
 	attr_accessor :pos, :board
 	attr_reader :rows
@@ -19,6 +17,12 @@ class Board
 			fill(color)
 		end
 		puts draw
+	end
+	
+	def check_king
+		self.pieces_list.each do |piece|
+			piece.king_me
+		end
 	end
 	
 	def to_s
@@ -93,8 +97,8 @@ class Board
 	def valid_move_seq(moves)
 		begin
 			dup_board = self.dup
-			dup_board.perform_moves!(moves)
-			self.perform_moves!(moves)
+			dup_board.moves_list(moves)
+			self.moves_list(moves)
 		rescue
 			p "InvalidMoveError"
 		end

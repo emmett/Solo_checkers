@@ -11,7 +11,7 @@ class Piece
 		[-1, -1]
 	]
 	
-	BOUNDS = (1..8).to_a.product((1..8).to_a)
+	BOUNDS = (0..7).to_a.product((0..7).to_a)
 	
 	attr_accessor :color, :pos, :board
 	
@@ -24,7 +24,11 @@ class Piece
 	end
 	
 	def to_s
-		@color == :RED ? "o" : "*"
+		if @king
+			@color == :RED ? "K" : "@"
+		else
+			@color == :RED ? "o" : "*"
+		end
 	end
 	
 	def moves
@@ -34,7 +38,7 @@ class Piece
 	def perform_jump(end_dest)
 		midpoint = [(pos[0] + end_dest[0]) / 2, (pos[1] + end_dest[1]) / 2]
 		raise 'invalid_jump' unless valid_jumps.include? (end_dest)
-		@board.move!(pos, midpoint)
+		@board.move!(self.pos, midpoint)
 		@board.move!(midpoint, end_dest)
 		self.pos = end_dest
 	end
@@ -42,7 +46,7 @@ class Piece
 	def perform_slide(end_dest)
 		raise 'Not a valid move' unless valid_slide.include? (end_dest)
 		raise 'Forced to jump' if force_jump
-		@board.move!(pos, end_dest)
+		@board.move!(self.pos, end_dest)
 		self.pos = end_dest
 	end
 	

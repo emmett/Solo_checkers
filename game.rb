@@ -1,39 +1,52 @@
 load './board.rb'
-load './piece.rb'
+require 'debugger'
 class Game
+	attr_reader :board
+	
 	def initialize		
 		@board = Board.new
 		@player1 = Player.new(:RED)
 		@player2 = Player.new(:BLACK)
-		@turn = player1.color
+		@turn = @player1.color
+		# play
 	end
 	
-	def won?
-		pieces = @board.pieces_list.select {|piece| piece.color == color}
+	def lost?
+		pieces = @board.pieces_list.select {|piece| piece.color == @turn }
 		return true if pieces.empty?
 		pieces.each do |piece|
-			return false if piece.valid_slide || piece.valid_jumps
+			return false unless piece.valid_slide.empty? && piece.valid_jumps.empty?
 		end
 		true
 	end
 	
 	def play
-		until won?
+		until lost?
+
 			begin
+				done = false
 				p "Please make your selection"
+				p "#{@turn} Turn"
 				selection = gets.chomp
-				selection.to_i!
 				selection = selection.split(",")
-				piece = @board.rows[selection[1]][selection[0]]
+				selection.map! { |coord| coord.to_i }
+				piece = @board.rows[selection[0]][selection[1]]
 				raise 'Not your turn' unless piece.color == @turn
-				p "Please select an end destination"
-				destination = gets.chomp
-				destination.to_i!
-				
+				until done
+					p "Please select an end destination"
+					destination = gets.chomp
+					destination = destination.split(",")
+					destination.map! { |coord| coord.to_i }	
+					selection += destination		
+					p "Is there another destination? (Y/N)"
+					answer = gets.chomp
+					done = true if answer[0].downcase == "n" 
+				end
+				@board.valid_move_seq(selection)
 			
-			@turn = !@turn
-			rescue
-				p 'Invalid selection please try again'
+			@turn == :RED ? @turn = :BLACK : @turn = :RED
+			rescue RuntimeError => e
+				p e.message
 			end
 		end
 		
@@ -49,3 +62,9 @@ class Player
 	end
 	
 end
+
+# 
+# raise "String", NewError
+# 
+# class NewError < Stderro
+# end
